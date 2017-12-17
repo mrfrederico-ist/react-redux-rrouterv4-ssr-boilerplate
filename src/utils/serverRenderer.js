@@ -6,11 +6,9 @@ import { renderRoutes } from 'react-router-config'
 import { Helmet } from 'react-helmet'
 import serialize from 'serialize-javascript'
 
-import routes from '../app/routes'
+import routes from '../routes'
 
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST)
-
-const render = ({ path, store, context }) => {
+const serverRenderer = ({ path, store, context, assets }) => {
 	const markup = renderToString(
 		<Provider store={store}>
 			<StaticRouter location={path} context={context}>
@@ -44,4 +42,4 @@ const render = ({ path, store, context }) => {
   `
 }
 
-export default render
+export default serverRenderer

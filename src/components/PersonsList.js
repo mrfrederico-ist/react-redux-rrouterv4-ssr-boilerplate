@@ -10,8 +10,8 @@ const PersonsList = props => (
 	</div>
 )
 
-PersonsList.PropTypes = {
-	users: PropTypes.array.isRequired,
+PersonsList.propTypes = {
+	users: PropTypes.array,
 }
 
 export default PersonsList

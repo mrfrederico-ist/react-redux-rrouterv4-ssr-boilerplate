@@ -1,15 +1,31 @@
 import React from 'react'
-import { hydrate } from 'react-dom'
-import BrowserRouter from 'react-router-dom/BrowserRouter'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
+import { renderRoutes } from 'react-router-config'
+import axios from 'axios'
 
-import App from './App'
+import { createStore } from './utils'
 
-hydrate(
-	<BrowserRouter>
-		<App />
-	</BrowserRouter>,
-	document.getElementById('root')
-)
+import routes from './routes'
+
+const axiosInstance = axios.create({ baseURL: '/api' })
+
+export const store = createStore({
+	initialState: window.INITIAL_STATE,
+	thunkExtraArgument: axiosInstance,
+})
+
+if (typeof document !== 'undefined') {
+	ReactDOM.hydrate(
+		<Provider store={store}>
+			<BrowserRouter>
+				<div>{renderRoutes(routes)}</div>
+			</BrowserRouter>
+		</Provider>,
+		document.getElementById('root'),
+	)
+}
 
 if (module.hot) {
 	module.hot.accept()

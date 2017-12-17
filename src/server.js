@@ -1,51 +1,55 @@
 import express from 'express'
-import React from 'react'
-import { StaticRouter } from 'react-router-dom'
-import { renderToString } from 'react-dom/server'
+import proxy from 'express-http-proxy'
+import axios from 'axios'
 
-import App from './App'
+import { createStore, matchRoutes, serverRenderer } from './utils'
 
-// eslint-disable-next-line import/no-dynamic-require
+import routes from '../src/routes'
+
+// Must be import in ./server.js
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST)
+
+const API_URL = 'http://react-ssr-api.herokuapp.com'
 
 const server = express()
 server
 	.disable('x-powered-by')
+	.use(
+		'/api',
+		proxy(API_URL, {
+			// API specific
+			proxyReqOptDecorator: opts => {
+				opts.headers['x-forwarded-host'] = 'localhost:3000'
+				return opts
+			},
+		}),
+	)
 	.use(express.static(process.env.RAZZLE_PUBLIC_DIR))
-	.get('/*', (req, res) => {
+	.get('*', async (req, res) => {
+		const axiosInstance = axios.create({
+			baseURL: API_URL,
+			headers: { cookie: req.get('cookie') || '' },
+		})
+		const store = createStore({ thunkExtraArgument: axiosInstance })
+
+		// Find the routes to be rendered and fill in the store with data
+		await matchRoutes({ routes, path: req.path, store })
+
+		// Used to retrieve context information about the rendered route
 		const context = {}
-		const markup = renderToString(
-			<StaticRouter context={context} location={req.url}>
-				<App />
-			</StaticRouter>
-		)
+		const renderedApp = serverRenderer({
+			path: req.path,
+			store,
+			context,
+			assets,
+		})
 
 		if (context.url) {
-			res.redirect(context.url)
+			res.redirect(301, context.url)
+		} else if (context.notFound) {
+			res.status(404).send(renderedApp)
 		} else {
-			res.status(200).send(
-				`<!doctype html>
-    <html lang="">
-    <head>
-        <meta charSet='utf-8' />
-        <title>Welcome to Razzle</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        ${
-					assets.client.css
-						? `<link rel="stylesheet" href="${assets.client.css}">`
-						: ''
-				}
-        ${
-					process.env.NODE_ENV === 'production'
-						? `<script src="${assets.client.js}" defer></script>`
-						: `<script src="${assets.client.js}" defer crossorigin></script>`
-				}
-    </head>
-    <body>
-        <div id="root">${markup}</div>
-    </body>
-</html>`
-			)
+			res.send(renderedApp)
 		}
 	})
 

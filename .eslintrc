@@ -3,7 +3,8 @@
   "plugins": ["prettier"],
   "rules": {
     "no-unused-vars": "error",
-    "no-console": "error",
+    "no-console": "warn",
+    "no-const-assign": "error",
     "no-underscore-dangle": "off",
     "prettier/prettier": [
       "error",
