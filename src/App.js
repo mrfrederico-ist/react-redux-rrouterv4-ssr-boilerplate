@@ -6,7 +6,7 @@ import { fetchCurrentUser } from './actions/auth.actions'
 
 import { Header } from './components'
 
-class App extends Component {
+export class App extends Component {
 	componentDidMount() {
 		this.props.fetchCurrentUser()
 	}
