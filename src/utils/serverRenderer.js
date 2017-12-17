@@ -5,18 +5,22 @@ import { StaticRouter } from 'react-router-dom'
 import { renderRoutes } from 'react-router-config'
 import { Helmet } from 'react-helmet'
 import serialize from 'serialize-javascript'
+import { ServerStyleSheet } from 'styled-components'
 
 import routes from '../routes'
 
 const serverRenderer = ({ path, store, context, assets }) => {
+	const sheet = new ServerStyleSheet()
+
 	const markup = renderToString(
 		<Provider store={store}>
 			<StaticRouter location={path} context={context}>
-				<div>{renderRoutes(routes)}</div>
+				<div>{sheet.collectStyles(renderRoutes(routes))}</div>
 			</StaticRouter>
 		</Provider>,
 	)
 
+	const styleTags = sheet.getStyleTags()
 	const helmet = Helmet.renderStatic()
 
 	return `
@@ -28,6 +32,7 @@ const serverRenderer = ({ path, store, context, assets }) => {
         <meta charSet='utf-8' />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        ${styleTags}
       </head>
       <body>
         <div id="root">${markup}</div>

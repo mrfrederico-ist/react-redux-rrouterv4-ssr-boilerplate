@@ -1,5 +1,10 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
+import styled from 'styled-components'
+
+const Container = styled.div`
+	margin-top: 200px;
+`
 
 const pageHeader = () => (
 	<Helmet>
@@ -10,11 +15,11 @@ const pageHeader = () => (
 )
 
 const HomePage = () => (
-	<div className="center-align" style={{ marginTop: '200px' }}>
+	<Container className="center-align">
 		{pageHeader()}
 		<h3>Welcome</h3>
 		<p>Check out these awesome features</p>
-	</div>
+	</Container>
 )
 
 export default {
