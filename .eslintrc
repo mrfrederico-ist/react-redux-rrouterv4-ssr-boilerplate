@@ -1,40 +1,18 @@
 {
-  "plugins": ["react", "prettier", "jest"],
-  "extends": ["airbnb", "prettier", "plugin:jest/recommended"],
-  "parser": "babel-eslint",
+  "extends": ["react-app", "import"],
+  "plugins": ["prettier"],
   "rules": {
     "no-unused-vars": "error",
     "no-console": "error",
     "no-underscore-dangle": "off",
-    "global-require": "off",
-    "no-param-reassign": "off",
-    "import/extensions": "off",
-    "import/default": "error",
-    "react/jsx-filename-extension": [
-      "error",
-      { "extensions": [".js", ".jsx"] }
-    ],
-    "react/jsx-indent": "off",
-    "react/jsx-indent-props": "off",
-    "react/prop-types": "off",
-    "react/jsx-curly-brace-presence": "off",
-    "react/no-array-index-key": "off",
     "prettier/prettier": [
       "error",
       {
         "singleQuote": true,
         "semi": false,
-        "useTabs": true
+        "useTabs": true,
+        "trailingComma": "all"
       }
-    ],
-    "jsx-a11y/anchor-is-valid": "off",
-    "jsx-a11y/click-events-have-key-events": "off",
-    "jsx-a11y/no-static-element-interactions": "off",
-    "jsx-a11y/label-has-for": "off"
-  },
-  "env": {
-    "jest/globals": true,
-    "browser": true,
-    "node": true
+    ]
   }
 }
